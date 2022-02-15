@@ -1,0 +1,17 @@
+#!/bin/bash
+
+PACKAGE_VERSION="$(rpm -q tuxedo-keyboard --qf '%{VERSION}\n')"
+KERNEL_VERSION="$(uname -r)"
+ARCH="$(uname -m)"
+
+echo "Building DKMS modules"
+dkms build "tuxedo-keyboard/${PACKAGE_VERSION}" || exit 1
+echo "Signing modules"
+"$(dirname "$0")/manual-sign" "/var/lib/dkms/tuxedo-keyboard/${PACKAGE_VERSION}/${KERNEL_VERSION}/${ARCH}/module/"*.ko || exit 1
+echo "Installing modules"
+dkms install "tuxedo-keyboard/${PACKAGE_VERSION}" || exit 1
+echo "Loading modules"
+for file in "/var/lib/dkms/tuxedo-keyboard/${PACKAGE_VERSION}/${KERNEL_VERSION}/${ARCH}/module/"*.ko
+do :
+    modprobe "$(basename -s .ko "$file")"
+done

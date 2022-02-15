@@ -1,0 +1,3 @@
+# Ignore MOK certificates and private keys
+MOK.der
+MOK.priv
