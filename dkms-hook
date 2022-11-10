@@ -1,0 +1,30 @@
+#!/bin/bash
+
+MOK_CERT="/root/module-signing/MOK.der"
+MOK_PKEY="/root/module-signing/MOK.priv"
+
+KERNELVER=${KERNELVER:-$(uname -r)}
+
+do_sign() {
+    /lib/modules/$KERNELVER/build/scripts/sign-file sha256 "${MOK_PKEY}" "${MOK_CERT}" "$1"
+}
+
+echo "DKMS Hook: Signing modules with MOK"
+cd ../${kernelver}/${arch}/module
+for module in $(find . -name '*.ko' -o -name '*.ko.xz' -o -name '*.ko.gz'); do
+    echo "Signing module: $module"
+    # For XZ/GZ:
+    module_basename=${module:0:-3}
+    module_suffix=${module: -3}
+    if [[ "$module_suffix" == ".xz" ]]; then
+        unxz $module
+        do_sign $module_basename
+        xz -f $module_basename
+    elif [[ "$module_suffix" == ".gz" ]]; then
+        gunzip $module
+        do_sign $module_basename
+        gzip -9f $module_basename
+    else
+        do_sign $module
+    fi    
+done

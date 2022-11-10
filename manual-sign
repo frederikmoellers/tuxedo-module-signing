@@ -21,7 +21,7 @@ do_sign() {
     /lib/modules/$KERNELVER/build/scripts/sign-file sha256 $mydir/MOK.priv $mydir/MOK.der "$1"
 }
 
-while ! read_passphrase; do echo "Wrong passphrase, please try again."; done
+#while ! read_passphrase; do echo "Wrong passphrase, please try again."; done
 
 for module in $@; do
     echo "Signing module: $module"
