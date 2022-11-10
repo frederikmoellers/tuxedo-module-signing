@@ -7,11 +7,15 @@ ARCH="$(uname -m)"
 echo "Building DKMS modules"
 dkms build "tuxedo-keyboard/${PACKAGE_VERSION}" || exit 1
 echo "Signing modules"
-"$(dirname "$0")/manual-sign" "/var/lib/dkms/tuxedo-keyboard/${PACKAGE_VERSION}/${KERNEL_VERSION}/${ARCH}/module/"*.ko || exit 1
+"$(dirname "$0")/manual-sign" $(find "/var/lib/dkms/tuxedo-keyboard/${PACKAGE_VERSION}/${KERNEL_VERSION}/${ARCH}/module/" -name '*.ko' -o -name '*.ko.xz' -o -name '*.ko.gz') || exit 1
 echo "Installing modules"
 dkms install "tuxedo-keyboard/${PACKAGE_VERSION}" || exit 1
 echo "Loading modules"
-for file in "/var/lib/dkms/tuxedo-keyboard/${PACKAGE_VERSION}/${KERNEL_VERSION}/${ARCH}/module/"*.ko
+for file in $(find "/var/lib/dkms/tuxedo-keyboard/${PACKAGE_VERSION}/${KERNEL_VERSION}/${ARCH}/module/" -name '*.ko' -o -name '*.ko.xz' -o -name '*.ko.gz')
 do :
-    modprobe "$(basename -s .ko "$file")"
+    MODULENAME="$(basename "$file")"
+    MODULENAME="$(basename -s .xz "$MODULENAME")"
+    MODULENAME="$(basename -s .gz "$MODULENAME")"
+    MODULENAME="$(basename -s .ko "$MODULENAME")"
+    modprobe "$MODULENAME"
 done
