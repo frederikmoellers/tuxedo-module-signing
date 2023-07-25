@@ -11,19 +11,23 @@ do_sign() {
 
 echo "DKMS Hook: Signing modules with MOK"
 cd ../${kernelver}/${arch}/module
-for module in $(find . -name '*.ko' -o -name '*.ko.xz' -o -name '*.ko.gz'); do
+for module in $(find . -name '*.ko' -o -name '*.ko.xz' -o -name '*.ko.gz' -o -name '*.ko.zst'); do
     echo "Signing module: $module"
-    # For XZ/GZ:
-    module_basename=${module:0:-3}
-    module_suffix=${module: -3}
-    if [[ "$module_suffix" == ".xz" ]]; then
+    # For XZ/GZ/ZST:
+    module_basename="$(echo "$module" | sed -e 's/\.xz$//' -e 's/\.gz$//' -e 's/\.zst//')"
+    module_suffix="$(echo "$module" | sed -e 's/.*\.//g')"
+    if [[ "$module_suffix" == "xz" ]]; then
         unxz $module
         do_sign $module_basename
         xz -f $module_basename
-    elif [[ "$module_suffix" == ".gz" ]]; then
+    elif [[ "$module_suffix" == "gz" ]]; then
         gunzip $module
         do_sign $module_basename
         gzip -9f $module_basename
+    elif [[ "$module_suffix" == "zst" ]]; then
+        unzstd --rm $module
+        do_sign $module_basename
+        zstd $module_basename -o $module
     else
         do_sign $module
     fi    
