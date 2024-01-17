@@ -25,9 +25,9 @@ for module in $(find . -name '*.ko' -o -name '*.ko.xz' -o -name '*.ko.gz' -o -na
         do_sign $module_basename
         gzip -9f $module_basename
     elif [[ "$module_suffix" == "zst" ]]; then
-        unzstd --rm $module
+        unzstd -f --rm $module
         do_sign $module_basename
-        zstd $module_basename -o $module
+        zstd -f --rm $module_basename -o $module
     else
         do_sign $module
     fi    

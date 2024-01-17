@@ -13,7 +13,7 @@ You do if you:
 ```
 ./one-time-setup
 ```
-3. Make sure the DKMS sources are installed. The package's name is `tuxedo-keyboard`.
+3. Make sure the DKMS sources are installed. The package's name is `tuxedo-drivers`.
 4. On every kernel upgrade, run
 ```
 ./tuxedo-sign
@@ -25,4 +25,4 @@ The `one-time-setup` and `manual-sign` scripts are based on this Gist:
 https://gist.github.com/sbueringer/bd8cec239c44d66967cf307d808f10c4
 
 ## Can I automate this?
-Yes, there are 2 files included for automation: You need to copy `dkms-tuxedo-keyboard.conf` to `/etc/dkms/tuxedo-keyboard.conf` (don't forget to remove the `dkms-` from the filename) and you may need to change the directory where the scripts are located in the same file. Furthermore, your MOK private key must not be passphrase-protected or the automatical signing will fail (or possibly ask for a password on the command line).
+Yes, there are 2 files included for automation: You need to copy `dkms-tuxedo-drivers.conf` to `/etc/dkms/tuxedo-drivers.conf` (don't forget to remove the `dkms-` from the filename) and you may need to change the directory where the scripts are located in the same file. Furthermore, your MOK private key must not be passphrase-protected or the automatical signing will fail (or possibly ask for a password on the command line).

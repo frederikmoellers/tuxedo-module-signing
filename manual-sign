@@ -28,9 +28,9 @@ for module in $@; do
         do_sign $module_basename
         gzip -9f $module_basename
     elif [[ "$module_suffix" == "zst" ]]; then
-        unzstd $module
+        unzstd --rm -f $module
         do_sign $module_basename
-        zstd $module_basename
+        zstd --rm -f $module_basename
     else
         do_sign $module
     fi    
